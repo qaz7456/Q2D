@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+
+	<queueConnectionFactory>
+		<property name="username" value="admin" />
+		<property name="password" value="password" />
+		<property name="port" value="5672" />
+		<property name="host" value="192.168.112.199" />
+	</queueConnectionFactory>
+
+	<databaseConnectionFactory>
+		<jdbcDriver>com.mysql.jdbc.Driver</jdbcDriver>
+		<!-- <dbURL>jdbc:mysql://192.168.112.164/db_virtualbusiness?useSSL=false</dbURL> -->
+		<dbURL>jdbc:mysql://localhost/ian?useSSL=false</dbURL>
+		<dbUserName>root</dbUserName>
+		<!-- <dbPassword>admin123</dbPassword> -->
+		<dbPassword>root</dbPassword>
+	</databaseConnectionFactory>
+
+	<Insert>
+		<Table name="product">
+			<Field>
+				<Source>CompanyCode</Source>
+				<Destination>productId</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+			<Field>
+				<Source>WarehouseCode</Source>
+				<Destination>productName</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+		</Table>
+	</Insert>
+	
+	<Delete>
+		<Table name="product">
+			<Field>
+				<Source>CompanyCode</Source>
+				<Destination>productId</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+		</Table>
+		<Table name="user">
+			<Field>
+				<Source>WarehouseCode</Source>
+				<Destination>user_id</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+		</Table>
+	</Delete>
+</config>

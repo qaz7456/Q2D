@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldName>
+		<source>Carrier</source>
+		<destination>Sender</destination>
+		<description>寄送者</description>
+		<isAttribute>false</isAttribute>
+	</fieldName>
+	<fieldName>
+		<source>service</source>
+		<destination>superservice</destination>
+		<description></description>
+		<isAttribute>true</isAttribute>
+	</fieldName>
+	<fieldName>
+		<source>CarrierProduct</source>
+		<destination>Product</destination>
+		<description>產品</description>
+		<isAttribute>false</isAttribute>
+	</fieldName>
+	<fieldName>
+		<source>SaleOrderStatusRequest</source>
+		<destination>StatusRequest</destination>
+		<description></description>
+		<isAttribute>false</isAttribute>
+	</fieldName>
+	<fieldName>
+		<source>CompanyCode</source>
+		<destination>Code</destination>
+		<description></description>
+		<isAttribute>false</isAttribute>
+	</fieldName>
+	<fieldName>
+		<source>ErpOrder</source>
+		<destination>ErpNo</destination>
+		<description></description>
+		<isAttribute>false</isAttribute>
+	</fieldName>
+</config>

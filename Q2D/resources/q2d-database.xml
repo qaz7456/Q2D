@@ -1,0 +1,32 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+<!-- <Database> -->
+<!-- 	<JDBCDriver>com.mysql.jdbc.Driver</JDBCDriver> -->
+<!-- 	<DBURL>jdbc:mysql://192.168.112.164/db_virtualbusiness</DBURL> -->
+<!-- 	<DBUserName>root</DBUserName> -->
+<!-- 	<DBPassword>admin123</DBPassword> -->
+	<Table>
+		<TableName>product</TableName>
+		<TableStructure>
+			<Column>
+				<ColumnName>productId</ColumnName>
+				<ColumnType>VARCHAR</ColumnType>
+				<Length>10</Length>
+			</Column>
+			<Column>
+				<ColumnName>productName</ColumnName>
+				<ColumnType>VARCHAR</ColumnType>
+				<Length>100</Length>
+			</Column>
+		</TableStructure>
+		<TableData>
+			<Product1>
+				<productId>I1</productId>
+				<productName>Samsung Tv</productName>
+			</Product1>
+			<Product2>
+				<productId>I3</productId>
+				<productName>SONY LED TV</productName>
+			</Product2>
+		</TableData>
+	</Table>
+<!-- </Database> -->

@@ -1,0 +1,29 @@
+<Request service="SALE_ORDER_STATUS_PUSH_SERVICE" lang="zh-CN">
+	<Body>
+		<SaleOrderStatusRequest>
+			<CompanyCode>W8860571504</CompanyCode>
+			<SaleOrders>
+				<SaleOrder>
+					<WarehouseCode>886DCA</WarehouseCode>
+					<ErpOrder>20170803TW1</ErpOrder>
+					<WayBillNo>289081343391</WayBillNo>
+					<ShipmentId>OXMS201708030114140703</ShipmentId>
+					<Waves>EW886A17080300102</Waves>
+					<CartNum>1</CartNum>
+					<GridNum>0001</GridNum>
+					<Carrier>顺丰速运</Carrier>
+					<CarrierProduct>島内件(80CM 0.5-1.5KG)</CarrierProduct>
+					<IsSplit>N</IsSplit>
+					<Steps>
+						<Step>
+							<EventTime>2017-08-03 15:31:25</EventTime>
+							<EventAddress>WOM</EventAddress>
+							<Status>1400</Status>
+							<Note>您的订单已取消,取消原因：客户要求取消订单</Note>
+						</Step>
+					</Steps>
+				</SaleOrder>
+			</SaleOrders>
+		</SaleOrderStatusRequest>
+	</Body>
+</Request>
