@@ -18,6 +18,12 @@
 		<dbPassword>root</dbPassword>
 	</databaseConnectionFactory>
 
+	<HeartBeatClient>
+		<BeatID>Q2W</BeatID>
+		<FileName>Q2W</FileName>
+		<TimeSeries>60000</TimeSeries>
+	</HeartBeatClient>
+	
 	<Insert>
 		<Table name="product">
 			<Field>
@@ -31,8 +37,15 @@
 				<Type>VARCHAR</Type>
 			</Field>
 		</Table>
+		<Table name="user">
+			<Field>
+				<Source>CompanyCode</Source>
+				<Destination>user_id</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+		</Table>
 	</Insert>
-	
+
 	<Delete>
 		<Table name="product">
 			<Field>
@@ -49,4 +62,44 @@
 			</Field>
 		</Table>
 	</Delete>
+
+	<Update>
+		<Table name="product">
+			<Field>
+				<Source>WarehouseCode</Source>
+				<Destination>productName</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+			<Field>
+				<Source>WarehouseCode</Source>
+				<Destination>productId</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+			<Condition>
+				<Source>CompanyCode</Source>
+				<Destination>productId</Destination>
+				<Type>VARCHAR</Type>
+				<Relation>=</Relation>
+			</Condition>
+		</Table>
+		<Table name="user">
+			<Field>
+				<Source>WarehouseCode</Source>
+				<Destination>memo</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+			<Field>
+				<Source>WarehouseCode</Source>
+				<Destination>user_id</Destination>
+				<Type>VARCHAR</Type>
+			</Field>
+			<Condition>
+				<Source>CompanyCode</Source>
+				<Destination>user_id</Destination>
+				<Type>VARCHAR</Type>
+				<Relation>=</Relation>
+			</Condition>
+		</Table>
+	</Update>
+	
 </config>
