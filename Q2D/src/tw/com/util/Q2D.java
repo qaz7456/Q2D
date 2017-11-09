@@ -65,10 +65,13 @@ public class Q2D extends Thread {
 			try {
 
 				heartBeatService.beat();
-				message = RabbitMQ.Pull();
+				message = RabbitMQ.Pull(configPath);
 
 				logger.debug("提取: {}", message);
 				if (message != null) {
+					logger.debug("執行轉換動作");
+					logger.debug("轉換: {}", message);
+					message = XMLUtil.getXml(message);
 					logger.debug("執行資料庫新增動作");
 					XMLUtil.insert(configPath, message);
 					logger.debug("執行資料庫刪除動作");
@@ -82,11 +85,8 @@ public class Q2D extends Thread {
 			}
 			if (message == null) {
 				try {
-					// long breakTime =
-					// service.getHeartBeatClientVO().getTimeSeries();
-					long breakTime = 2000;
-					logger.debug("休息" + breakTime + "毫秒");
-					Thread.sleep(breakTime);
+					logger.debug("休息" + timeSeries + "毫秒");
+					Thread.sleep(timeSeries);
 				} catch (InterruptedException e) {
 					logger.error(e.getMessage());
 				}
@@ -97,7 +97,7 @@ public class Q2D extends Thread {
 	public static void main(String[] args) throws Exception {
 		String configPath = "resources\\q2d-config.xml";
 		String convertPath = "resources\\test.xml";
-		String heartBeatXmlFilePath ="";
+		String heartBeatXmlFilePath ="resources\\heatBeatClinetBeans.xml";
 		new Q2D(configPath,heartBeatXmlFilePath).start();
 		// XMLUtil.update(configPath, convertPath);
 		// XMLUtil.insert(configPath,convertPath);

@@ -28,7 +28,7 @@ public class RabbitMQ {
 
 	private static final Logger logger = LogManager.getLogger(RabbitMQ.class);
 
-	public static void Push(String message) throws Exception {
+	public static String Pull(String configPath) throws IOException, TimeoutException {
 		DocumentBuilderFactory domfac = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dombuilder = null;
 		try {
@@ -36,7 +36,7 @@ public class RabbitMQ {
 		} catch (ParserConfigurationException e) {
 			logger.error(e);
 		}
-		File file = new File(Q2D.FILE_XML_PATH);
+		File file = new File(configPath);
 		Document configDoc = null;
 		try {
 			configDoc = dombuilder.parse(file);
@@ -45,118 +45,27 @@ public class RabbitMQ {
 		}
 		Element configRoot = configDoc.getDocumentElement();
 
-		NodeList connectionFactory = configRoot.getElementsByTagName("connectionFactory");
-		NodeList connectionInfo = connectionFactory.item(0).getChildNodes();
-
-		String host = null;
-		int port = 0;
-		String username = null;
-		String password = null;
-
-		for (int i = 0; i < connectionInfo.getLength(); i++) {
-			Element node = (Element) connectionInfo.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-
-				NamedNodeMap namedNodeMap = node.getAttributes();
-				for (int l = 0; l < namedNodeMap.getLength(); ++l) {
-					Node attr = namedNodeMap.item(l);
-					String attrName = attr.getNodeName();
-					String attrVal = attr.getNodeValue();
-
-					host = "host".equals(attrName) ? attrVal : host;
-					port = "port".equals(attrName) ? Integer.valueOf(attrVal) : port;
-					username = "username".equals(attrName) ? attrVal : username;
-					password = "password".equals(attrName) ? attrVal : password;
-				}
-			}
-		}
-		logger.debug("host: {} \\ port: {} \\ username: {} \\ password: {}", host, port, username, password);
-
-		NodeList queueDestination = configRoot.getElementsByTagName("queueDestination");
-		NodeList queueDestinationInfo = queueDestination.item(0).getChildNodes();
-
-		String queue_name = null;
-		String routing_key = null;
-		String exchange = null;
-
-		for (int i = 0; i < queueDestinationInfo.getLength(); i++) {
-			Node node = (Node) connectionInfo.item(i);
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-
-				NamedNodeMap namedNodeMap = node.getAttributes();
-				for (int l = 0; l < namedNodeMap.getLength(); ++l) {
-					Node attr = namedNodeMap.item(l);
-					String attrName = attr.getNodeName();
-					String attrVal = attr.getNodeValue();
-
-					queue_name = "queue_name".equals(attrName) ? attrVal : queue_name;
-					routing_key = "routing_key".equals(attrName) ? attrVal : routing_key;
-					exchange = "exchange".equals(attrName) ? attrVal : exchange;
-				}
-			}
-		}
-		logger.debug("queue_name: {} \\ routing_key: {} \\ exchange: {}", queue_name, routing_key, exchange);
-
-		ConnectionFactory factory = new ConnectionFactory();
-
-		factory.setHost(host);
-		factory.setPort(port);
-		factory.setUsername(username);
-		factory.setPassword(password);
-
-		Connection connection = factory.newConnection();
-		Channel channel = connection.createChannel();
-
-		channel.queueDeclare(queue_name, true, false, false, null);
-
-		channel.basicPublish(exchange, routing_key, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
-		logger.debug("寄送: {}", message);
-
-		channel.close();
-		connection.close();
-	}
-
-	public static String Pull() throws IOException, TimeoutException {
-		DocumentBuilderFactory domfac = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dombuilder = null;
-		try {
-			dombuilder = domfac.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			logger.error(e);
-		}
-		File file = new File(Q2D.FILE_XML_PATH);
-		Document configDoc = null;
-		try {
-			configDoc = dombuilder.parse(file);
-		} catch (SAXException | IOException e) {
-			logger.error(e);
-		}
-		Element configRoot = configDoc.getDocumentElement();
-
-		NodeList connectionFactory = configRoot.getElementsByTagName("connectionFactory");
+		NodeList connectionFactory = configRoot.getElementsByTagName("queueConnectionFactory");
 		NodeList connectionInfo = connectionFactory.item(0).getChildNodes();
 
 		String host = null, username = null, password = null;
 		int port = 0;
 
 		for (int i = 0; i < connectionInfo.getLength(); i++) {
-			Element node = (Element) connectionInfo.item(i);
+			Node node = (Node) connectionInfo.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 
-				NamedNodeMap namedNodeMap = node.getAttributes();
-				for (int l = 0; l < namedNodeMap.getLength(); ++l) {
-					Node attr = namedNodeMap.item(l);
-					String attrName = attr.getNodeName();
-					String attrVal = attr.getNodeValue();
+				String nodeName = node.getNodeName();
+				String value = node.getTextContent();
 
-					host = "host".equals(attrName) ? attrVal : host;
-					port = "port".equals(attrName) ? Integer.valueOf(attrVal) : port;
-					username = "username".equals(attrName) ? attrVal : username;
-					password = "password".equals(attrName) ? attrVal : password;
-				}
+				host = nodeName.equals("host") ? value : host;
+				port = nodeName.equals("port") ? Integer.valueOf(value) : port;
+				username = nodeName.equals("username") ? value : username;
+				password = nodeName.equals("password") ? value : password;
 			}
 		}
-		logger.debug("host: {} \\ port: {} \\ username: {} \\ password: {}", host, port, username, password);
+		logger.debug("host: {} \\ port: {} \\ username: {} \\ password: {}", host, port,
+				username,password);
 
 		NodeList queueOrigin = configRoot.getElementsByTagName("queueOrigin");
 		NodeList queueOriginInfo = queueOrigin.item(0).getChildNodes();
@@ -165,17 +74,15 @@ public class RabbitMQ {
 		boolean autoAck = false;
 
 		for (int i = 0; i < queueOriginInfo.getLength(); i++) {
-			Element node = (Element) connectionInfo.item(i);
+
+			Node node = (Node) queueOriginInfo.item(i);
+
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 
-				NamedNodeMap namedNodeMap = node.getAttributes();
-				for (int l = 0; l < namedNodeMap.getLength(); ++l) {
-					Node attr = namedNodeMap.item(l);
-					String attrName = attr.getNodeName();
-					String attrVal = attr.getNodeValue();
+				String nodeName = node.getNodeName();
+				String value = node.getTextContent();
 
-					queue_name = "queue_name".equals(attrName) ? attrVal : queue_name;
-				}
+				queue_name = "queueName".equals(nodeName) ? value : queue_name;
 			}
 		}
 		logger.debug("queue_name: {} ", queue_name);

@@ -3,10 +3,14 @@
 <config>
 
 	<queueConnectionFactory>
-		<property name="username" value="admin" />
-		<property name="password" value="password" />
-		<property name="port" value="5672" />
-		<property name="host" value="192.168.112.199" />
+        <host>192.168.112.199</host>
+        <password>password</password>
+        <port>5672</port>
+        <username>admin</username>
+		<!-- <property name="username" value="admin" />-->
+		<!-- <property name="password" value="password" />-->
+		<!-- <property name="port" value="5672" />-->
+		<!-- <property name="host" value="192.168.112.199" />-->
 	</queueConnectionFactory>
 
 	<databaseConnectionFactory>
@@ -17,7 +21,13 @@
 		<!-- <dbPassword>admin123</dbPassword> -->
 		<dbPassword>root</dbPassword>
 	</databaseConnectionFactory>
-
+	
+	<queueOrigin>
+		<exchangeName>exchange</exchangeName>
+		<routingKey>ian</routingKey>
+		<queueName>ian</queueName>
+	</queueOrigin>
+	
 	<HeartBeatClient>
 		<BeatID>Q2W</BeatID>
 		<FileName>Q2W</FileName>

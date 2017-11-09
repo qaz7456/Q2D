@@ -25,6 +25,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+import org.json.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -587,5 +589,117 @@ public class XMLUtil {
 				}
 			}
 		}
+	}
+
+	public static String getXml(String input) throws Exception {
+		String xml = "";
+		List<String> list = null;
+		Map<String, String> map = null;
+		List<Map<String, String>> converterConfigList = new ArrayList<>();
+		
+		if (Character.isJSONValid(input)) {
+			JSONObject json = new JSONObject(input);
+			xml = XML.toString(json);
+			list = new ArrayList<String>();
+		}
+		if (Character.isXMLLike(input)) {
+			xml = input;
+
+			
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
+	        DocumentBuilder builder= null;  
+			Document doc = null;
+	        try 
+	        {  
+	            builder = factory.newDocumentBuilder();  
+	             doc = builder.parse( new InputSource( new StringReader( input )) ); 
+
+	        } catch (Exception e) {  
+				logger.error(e);
+	        }
+	        
+			Element root = doc.getDocumentElement();
+
+			NodeList fields = root.getChildNodes();
+
+			for (int i = 0; i < fields.getLength(); i++) {
+				Node node = (Node) fields.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					map = new HashMap<String, String>();
+					NodeList settings = node.getChildNodes();
+					for (int j = 0; j < settings.getLength(); j++) {
+						Node setting = (Node) settings.item(j);
+						if (setting.getNodeType() == Node.ELEMENT_NODE) {
+							String nodeName = setting.getNodeName();
+							String textContent = setting.getTextContent();
+							map.put(nodeName, textContent);
+						}
+					}
+					converterConfigList.add(map);
+				}
+			}
+		}
+		
+		
+		if (!"".equals(xml)) {
+
+			Document doc = getDocument(xml);
+
+			NodeList all_nodeList = doc.getElementsByTagName("*");
+
+			for (int i = 0; i < all_nodeList.getLength(); i++) {
+
+				Element element = (Element) all_nodeList.item(i);
+				String nodeName = element.getNodeName();
+
+				if (Character.isJSONValid(input)) {
+					if ("_".equals(nodeName.substring(0, 1))) {
+
+						((Element) element.getParentNode()).setAttribute(nodeName.substring(1, nodeName.length()),
+								element.getTextContent());
+
+						list.add(nodeName);
+					}
+				}
+
+				for (int j = 0; j < converterConfigList.size(); j++) {
+
+					 map = converterConfigList.get(j);
+
+					if (!"true".equals(map.get("isAttribute"))) {
+						if (map.get("source").equals(nodeName)) {
+
+							NodeList nodeList = doc.getElementsByTagName(nodeName);
+							for (int k = 0; k < nodeList.getLength();) {
+								doc.renameNode(nodeList.item(k), "", map.get("destination"));
+							}
+						}
+					} else {
+						NamedNodeMap namedNodeMap = element.getAttributes();
+						for (int l = 0; l < namedNodeMap.getLength(); ++l) {
+							Node attr = namedNodeMap.item(l);
+							String attrName = attr.getNodeName();
+							String attrVal = attr.getNodeValue();
+
+							if (map.get("source").equals(attrName)) {
+								element.removeAttribute(attrName);
+								element.setAttribute(map.get("destination"), attrVal);
+							}
+						}
+					}
+				}
+			}
+			if (Character.isJSONValid(input)) {
+				Element root = doc.getDocumentElement();
+				for (int i = 0; i < list.size(); i++) {
+
+					root.getElementsByTagName(list.get(i)).item(0).getParentNode()
+							.removeChild(root.getElementsByTagName(list.get(i)).item(0));
+				}
+			}
+			xml = XMLConverter.docToString(doc);
+
+		}
+		return xml;
 	}
 }
