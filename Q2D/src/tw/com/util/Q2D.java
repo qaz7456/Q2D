@@ -70,8 +70,8 @@ public class Q2D extends Thread {
 				logger.debug("提取: {}", message);
 				if (message != null) {
 					logger.debug("執行轉換動作");
-					logger.debug("轉換: {}", message);
 					message = XMLUtil.getXml(message);
+					logger.debug("轉換: {}", message);
 					logger.debug("執行資料庫新增動作");
 					XMLUtil.insert(configPath, message);
 					logger.debug("執行資料庫刪除動作");
