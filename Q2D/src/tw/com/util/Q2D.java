@@ -19,7 +19,7 @@ public class Q2D extends Thread {
 	private String configPath = null;
 	private String heartBeatXmlFilePath = null;
 
-	public Q2D(String configPath,String heartBeatXmlFilePath) {
+	public Q2D(String configPath, String heartBeatXmlFilePath) {
 		this.configPath = configPath;
 		this.heartBeatXmlFilePath = heartBeatXmlFilePath;
 	}
@@ -69,19 +69,24 @@ public class Q2D extends Thread {
 
 				logger.debug("提取: {}", message);
 				if (message != null) {
-					logger.debug("執行轉換動作");
-					message = XMLUtil.getXml(message);
-					logger.debug("轉換: {}", message);
-					logger.debug("執行資料庫新增動作");
-					XMLUtil.insert(configPath, message);
-					logger.debug("執行資料庫刪除動作");
-					XMLUtil.delete(configPath, message);
-					logger.debug("執行資料庫修改動作");
-					XMLUtil.update(configPath, message);
+					try {
+						logger.debug("執行轉換動作");
+						String result = XMLUtil.getXml(message);
+						logger.debug("轉換: {}", result);
+						logger.debug("執行資料庫新增動作");
+						XMLUtil.insert(configPath, result);
+						logger.debug("執行資料庫刪除動作");
+						XMLUtil.delete(configPath, result);
+						logger.debug("執行資料庫修改動作");
+						XMLUtil.update(configPath, result);
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+						RabbitMQ.ErrorPush(configPath, message);
+					}
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			if (message == null) {
 				try {
@@ -95,10 +100,12 @@ public class Q2D extends Thread {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String configPath = "resources\\q2d-config.xml";
-		String convertPath = "resources\\test.xml";
-		String heartBeatXmlFilePath ="resources\\heatBeatClinetBeans.xml";
-		new Q2D(configPath,heartBeatXmlFilePath).start();
+		String configPath = args[0];
+		String heartBeatXmlFilePath = args[1];
+		// String configPath = "resources\\q2d-config.xml";
+		// String heartBeatXmlFilePath = "resources\\heatBeatClinetBeans.xml";
+		new Q2D(configPath, heartBeatXmlFilePath).start();
+		// String convertPath = "resources\\test.xml";
 		// XMLUtil.update(configPath, convertPath);
 		// XMLUtil.insert(configPath,convertPath);
 		// XMLUtil.delete(configPath, convertPath);
