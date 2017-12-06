@@ -129,6 +129,34 @@ public class XMLUtil {
 		return document;
 	}
 
+	/*
+	 * 提供XML字串得到Document物件
+	 * */
+	public static Document getDocumentForXml(String xml) throws Exception {
+
+		DocumentBuilderFactory domfac = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dombuilder = null;
+		try {
+			dombuilder = domfac.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			logger.error(e);
+		}
+
+		InputSource is = null;
+
+		try {
+			is = new InputSource(new StringReader(xml));
+		} catch (Exception e) {
+		}
+		Document doc = null;
+		try {
+			doc = dombuilder.parse(is);
+		} catch (SAXException | IOException e) {
+			logger.error(e);
+		}
+		return doc;
+	}
+	
 	public static void delete(String configPath, String convertPath) {
 
 		// 得到自定義的設定物件
@@ -283,14 +311,14 @@ public class XMLUtil {
 		}
 	}
 
-	public static void insert(String configPath, String convertPath) {
+	public static void insert(String configPath, String xml) throws Exception {
 
 		// 得到自定義的設定物件
 		Document configDoc = getDocument(configPath);
 		Element configRoot = configDoc.getDocumentElement();
 
 		// 得到要進行轉換的物件
-		Document convertDoc = getDocument(convertPath);
+		Document convertDoc = getDocumentForXml(xml);
 
 		// 從config XML中撈取新增相關資訊
 		NodeList insert = configRoot.getElementsByTagName("Insert");
@@ -605,19 +633,9 @@ public class XMLUtil {
 		if (Character.isXMLLike(input)) {
 			xml = input;
 
+ 
+			Document doc = getDocumentForXml(xml);
 			
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
-	        DocumentBuilder builder= null;  
-			Document doc = null;
-	        try 
-	        {  
-	            builder = factory.newDocumentBuilder();  
-	             doc = builder.parse( new InputSource( new StringReader( input )) ); 
-
-	        } catch (Exception e) {  
-				logger.error(e);
-	        }
-	        
 			Element root = doc.getDocumentElement();
 
 			NodeList fields = root.getChildNodes();
@@ -638,12 +656,34 @@ public class XMLUtil {
 					converterConfigList.add(map);
 				}
 			}
+			
+//			for (int i = 0; i < fields.getLength(); i++) {
+//				Node node = (Node) fields.item(i);
+//				if (node.getNodeType() == Node.ELEMENT_NODE) {
+//					map = new HashMap<String, String>();
+//					NodeList settings = node.getChildNodes();
+//					for (int j = 0; j < settings.getLength(); j++) {
+//						Node setting = (Node) settings.item(j);
+//						if (setting.getNodeType() == Node.ELEMENT_NODE) {
+//							String nodeName = setting.getNodeName();
+//							String textContent = setting.getTextContent();
+//							map.put(nodeName, textContent);
+//						}
+//					}
+//					converterConfigList.add(map);
+//				}
+//			}
 		}
 		
-		
+		for(int i =0;i<converterConfigList.size();i++){
+			Map<String, String> map2 = converterConfigList.get(i);
+			System.out.println(map2);
+		}
+
+		System.out.println("----------");
 		if (!"".equals(xml)) {
 
-			Document doc = getDocument(xml);
+			Document doc = getDocumentForXml(xml);
 
 			NodeList all_nodeList = doc.getElementsByTagName("*");
 

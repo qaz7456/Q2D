@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <queueConnectionFactory>
+        <host>192.168.112.199</host>
+        <password>password</password>
+        <port>5672</port>
+        <username>admin</username>
+        <virtualHost>/</virtualHost>
+    </queueConnectionFactory>
+    <databaseConnectionFactory>
+        <dbPassword>root</dbPassword>
+        <dbURL>jdbc:mysql://localhost/ian?useSSL=false</dbURL>
+        <dbUserName>root</dbUserName>
+        <jdbcDriver>com.mysql.jdbc.Driver</jdbcDriver>
+    </databaseConnectionFactory>
+    <queueOrigin>
+        <exchangeName>exchange</exchangeName>
+        <queueName>ian</queueName>
+        <routingKey>ian</routingKey>
+    </queueOrigin>
+    <queueError>
+        <exchangeName>exchange</exchangeName>
+        <queueName>ian2</queueName>
+        <routingKey>ian2</routingKey>
+    </queueError>
+    <HeartBeatClient>
+        <BeatID>test_q2d</BeatID>
+        <FileName>test_q2d</FileName>
+        <TimeSeries>60000</TimeSeries>
+    </HeartBeatClient>
+    <Insert>
+        <Table name="product">
+            <Field>
+                <Source>CompanyCode</Source>
+                <Destination>productId</Destination>
+                <Type>VARCHAR</Type>
+            </Field>
+            <Field>
+                <Source>WarehouseCode</Source>
+                <Destination>productName</Destination>
+                <Type>VARCHAR</Type>
+            </Field>
+        </Table>
+        <Table name="user">
+            <Field>
+                <Source>CompanyCode</Source>
+                <Destination>user_id</Destination>
+                <Type>VARCHAR</Type>
+            </Field>
+        </Table>
+    </Insert>
+    <Delete/>
+    <Update/>
+</config>

@@ -70,9 +70,7 @@ public class Q2D extends Thread {
 				logger.debug("提取: {}", message);
 				if (message != null) {
 					try {
-						logger.debug("執行轉換動作");
-						String result = XMLUtil.getXml(message);
-						logger.debug("轉換: {}", result);
+						String result = message;
 						logger.debug("執行資料庫新增動作");
 						XMLUtil.insert(configPath, result);
 						logger.debug("執行資料庫刪除動作");
@@ -102,16 +100,13 @@ public class Q2D extends Thread {
 	public static void main(String[] args) throws Exception {
 		String configPath = args[0];
 		String heartBeatXmlFilePath = args[1];
-		// String configPath = "resources\\q2d-config.xml";
-		// String heartBeatXmlFilePath = "resources\\heatBeatClinetBeans.xml";
-		new Q2D(configPath, heartBeatXmlFilePath).start();
+		// String configPath = "resources\\test_q2d-q2d-config.xml";
+		// String heartBeatXmlFilePath =
+		// "resources\\test_q2d-q2d-HeatBeatClinetBeans.xml";
 		// String convertPath = "resources\\test.xml";
 		// XMLUtil.update(configPath, convertPath);
 		// XMLUtil.insert(configPath,convertPath);
 		// XMLUtil.delete(configPath, convertPath);
-		// FILE_XML_PATH = args[0];
-		// FILE_XML_PATH = new File(FILE_XML_PATH).toURI().toString();
-		//
-		// thread.start();
+		new Q2D(configPath, heartBeatXmlFilePath).start();
 	}
 }
